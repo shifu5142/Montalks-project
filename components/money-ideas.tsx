@@ -1,17 +1,14 @@
 import { ideas } from "@/lib/data";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardContent,
-} from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { TrendingUp, PiggyBank, Wallet, BarChart3 } from "lucide-react";
 
 const icons = [TrendingUp, PiggyBank, Wallet, BarChart3];
-
-export function MoneyIdeas() {
+type props = {
+  moneySection: React.RefObject<HTMLDivElement>;
+};
+export function MoneyIdeas({ moneySection }: props) {
   return (
-    <section className="w-full bg-background py-24 px-6">
+    <section ref={moneySection} className="w-full bg-background py-24 px-6">
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <p className="text-sm font-semibold uppercase tracking-widest text-primary mb-3">

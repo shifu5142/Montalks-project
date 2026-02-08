@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { ArrowRight } from "lucide-react";
-
-export function HeroSection() {
+type props = {
+  scrollSection: (refSection?: React.RefObject<HTMLDivElement>) => void;
+};
+export function HeroSection({ scrollSection }: props) {
   return (
     <header className="relative min-h-screen w-full bg-primary text-primary-foreground flex flex-col items-center justify-center text-center px-6 overflow-hidden">
       {/* Decorative circles */}
@@ -27,13 +29,11 @@ export function HeroSection() {
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Button
             size="lg"
-            asChild
+            onClick={() => scrollSection()}
             className="bg-primary-foreground text-primary hover:bg-primary-foreground/90 shadow-xl px-8 py-6 text-base font-semibold rounded-xl"
           >
-            <Link href="/register">
-              Get Started
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Link>
+            Get Started
+            <ArrowRight className="ml-2 h-5 w-5" />
           </Button>
           <Button
             size="lg"
