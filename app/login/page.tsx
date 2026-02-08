@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react"
+import React from "react";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -16,14 +16,38 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { User, Mail, Lock } from "lucide-react";
-
+import { useRouter } from "next/navigation";
 export default function LoginPage() {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  function handleSubmit(e: React.FormEvent) {
+  async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // Handle login logic
+
+    try {
+      const res = await fetch("http://localhost:3000/register", {
+        // Handle login logic
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+      const respone = await res.json();
+      if (respone.success) {
+        alert(respone.message);
+      } else {
+        alert(`user doesnt found`);
+        router.push("/");
+      }
+    } catch (err) {
+      console.error(err);
+      alert("Server error");
+    }
   }
 
   return (
@@ -62,10 +86,7 @@ export default function LoginPage() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label
-                htmlFor="password"
-                className="text-foreground font-medium"
-              >
+              <Label htmlFor="password" className="text-foreground font-medium">
                 Password
               </Label>
               <div className="relative">

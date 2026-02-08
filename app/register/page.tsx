@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react"
+import React from "react";
 
 import Link from "next/link";
 import { useState } from "react";
@@ -16,16 +16,43 @@ import {
   CardFooter,
 } from "@/components/ui/card";
 import { UserPlus, User, Mail, Lock, ShieldCheck } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function RegisterPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  const router = useRouter();
+  async function handleSubmit(e: React.FormEvent) {
     // Handle register logic
+    e.preventDefault();
+    if (password !== confirmPassword) {
+      alert(
+        "Passwords do not match. Please make sure both fields are the same.",
+      );
+      return;
+    }
+    try {
+      const res = await fetch("http://localhost:3000/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          fullName,
+          email,
+          password,
+        }),
+      });
+      const response = await res.json();
+      response.success
+        ? router.push("/login")
+        : alert("some of the feild incorrect");
+    } catch (err) {
+      console.error(err);
+      alert("Server error");
+    }
   }
 
   return (
@@ -46,10 +73,7 @@ export default function RegisterPage() {
         <CardContent>
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
             <div className="flex flex-col gap-2">
-              <Label
-                htmlFor="fullName"
-                className="text-foreground font-medium"
-              >
+              <Label htmlFor="fullName" className="text-foreground font-medium">
                 Full Name
               </Label>
               <div className="relative">
@@ -85,10 +109,7 @@ export default function RegisterPage() {
             </div>
 
             <div className="flex flex-col gap-2">
-              <Label
-                htmlFor="password"
-                className="text-foreground font-medium"
-              >
+              <Label htmlFor="password" className="text-foreground font-medium">
                 Password
               </Label>
               <div className="relative">
