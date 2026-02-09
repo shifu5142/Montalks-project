@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const port = 3001;
 const db = require("mongoose");
-import { v4 as uuidv4 } from "uuid";
+const { v4: uuidv4 } = require("uuid");
 app.use(express.json());
 db.connect("mongodb+srv://Tomer_SV:WARwar0102@cluster0.mnrtrei.mongodb.net/")
   .then(() => console.log("MongoDB connected"))
