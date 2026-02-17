@@ -1,9 +1,9 @@
-import React from "react"
+import React from "react";
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { MenuBar } from "@/components/menu-bar";
-
+import { AppProvider } from "./context/AppContext";
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 
 export const metadata: Metadata = {
@@ -24,8 +24,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.variable} font-sans antialiased`}>
-        <MenuBar />
-        <main>{children}</main>
+        <AppProvider>
+          <MenuBar />
+          <main>{children}</main>
+        </AppProvider>
       </body>
     </html>
   );

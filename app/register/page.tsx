@@ -1,9 +1,7 @@
 "use client";
 
-import React from "react";
-
+import React, { useState } from "react";
 import Link from "next/link";
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -23,35 +21,40 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [loading, setLoading] = useState(false); // ✅ loading state
   const router = useRouter();
+
   async function handleSubmit(e: React.FormEvent) {
-    // Handle register logic
     e.preventDefault();
+
     if (password !== confirmPassword) {
       alert(
         "Passwords do not match. Please make sure both fields are the same.",
       );
       return;
     }
+
+    setLoading(true); // start loading
+
     try {
       const res = await fetch("http://localhost:3001/register", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          fullName,
-          email,
-          password,
-        }),
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fullName, email, password }),
       });
+
       const response = await res.json();
-      response.success
-        ? router.push("/login")
-        : alert("some of the feild incorrect");
+
+      if (response.success) {
+        router.push("/login");
+      } else {
+        alert("Some of the fields are incorrect");
+      }
     } catch (err) {
       console.error(err);
       alert("Server error");
+    } finally {
+      setLoading(false); // stop loading
     }
   }
 
@@ -72,6 +75,7 @@ export default function RegisterPage() {
 
         <CardContent>
           <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            {/* Full Name */}
             <div className="flex flex-col gap-2">
               <Label htmlFor="fullName" className="text-foreground font-medium">
                 Full Name
@@ -90,6 +94,7 @@ export default function RegisterPage() {
               </div>
             </div>
 
+            {/* Email */}
             <div className="flex flex-col gap-2">
               <Label htmlFor="email" className="text-foreground font-medium">
                 Email
@@ -108,6 +113,7 @@ export default function RegisterPage() {
               </div>
             </div>
 
+            {/* Password */}
             <div className="flex flex-col gap-2">
               <Label htmlFor="password" className="text-foreground font-medium">
                 Password
@@ -126,6 +132,7 @@ export default function RegisterPage() {
               </div>
             </div>
 
+            {/* Confirm Password */}
             <div className="flex flex-col gap-2">
               <Label
                 htmlFor="confirmPassword"
@@ -147,18 +154,20 @@ export default function RegisterPage() {
               </div>
             </div>
 
+            {/* Register Button */}
             <Button
               type="submit"
+              disabled={loading} // disable when loading
               className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold shadow-lg hover:bg-primary/90 text-base mt-2"
             >
-              Register
+              {loading ? "Registering..." : "Register"} {/* show loading */}
             </Button>
           </form>
         </CardContent>
 
         <CardFooter className="flex flex-col text-center text-sm text-muted-foreground">
           <p>
-            {"Already have an account? "}
+            Already have an account?{" "}
             <Link
               href="/login"
               className="text-primary font-semibold hover:underline"

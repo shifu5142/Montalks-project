@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-
+import { useAppContext } from "@/app/context/AppContext";
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -18,15 +18,15 @@ import {
 import { User, Mail, Lock } from "lucide-react";
 import { useRouter } from "next/navigation";
 export default function LoginPage() {
+  const { setUser } = useAppContext();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
+  const [userName, setuserName] = useState<string>("");
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-
     try {
-      const res = await fetch("http://localhost:3000/register", {
+      const res = await fetch("http://localhost:3001/login", {
         // Handle login logic
         method: "POST",
         headers: {
@@ -37,12 +37,17 @@ export default function LoginPage() {
           password,
         }),
       });
-      const respone = await res.json();
-      if (respone.success) {
-        alert(respone.message);
+      const response = await res.json();
+      if (response.success) {
+        alert(response.message);
+        setUser({
+          fullName: response.user.fullName,
+          email: response.user.email,
+        });
+        router.push("/");
+        setuserName(response.user);
       } else {
         alert(`user doesnt found`);
-        router.push("/");
       }
     } catch (err) {
       console.error(err);
