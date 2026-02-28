@@ -30,7 +30,8 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:3001/login", {
+      const API_BASE = process.env.API_BASE || "http://localhost:3001";
+      const res = await fetch(`${API_BASE}/login`, {
         // Handle login logic
         method: "POST",
         headers: {
@@ -55,7 +56,7 @@ export default function LoginPage() {
         setSuccess(true);
         setTimeout(() => {
           router.push("/");
-        }, 2000);
+        }, 1500);
       } else {
         alert(response.message || "Login failed");
       }
@@ -69,11 +70,6 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-secondary flex flex-col items-center justify-center px-6 pt-16">
-      {success && (
-        <div className="w-full max-w-md mb-4 rounded-xl bg-green-500 text-white font-semibold text-center py-4 px-4 shadow-lg">
-          Login successful
-        </div>
-      )}
       <Card className="w-full max-w-md rounded-2xl shadow-2xl border-border">
         <CardHeader className="text-center pb-2">
           <div className="mx-auto w-14 h-14 rounded-full bg-primary flex items-center justify-center mb-4">
@@ -124,6 +120,12 @@ export default function LoginPage() {
                 />
               </div>
             </div>
+
+            {success && (
+              <div className="rounded-xl bg-green-500 text-white font-semibold text-center py-4 px-4 shadow-lg">
+                Login successful
+              </div>
+            )}
 
             <Button
               type="submit"

@@ -1,9 +1,9 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Home, PieChart, Settings, LogOut, Users } from "lucide-react";
+import { Home, PieChart, Settings, LogOut, Users, Trash2, Sparkles } from "lucide-react";
 import { useAppContext } from "@/app/context/AppContext";
 
 const TOKEN_KEY = "montalks_token";
@@ -18,30 +18,31 @@ function AuthSidebar({ onGoToDashboard, onGoToSummary }: AuthSidebarProps) {
   const { setUser } = useAppContext();
   const router = useRouter();
   const [settingsOpen, setSettingsOpen] = useState(false);
-  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const settingsRef = useRef<HTMLDivElement>(null);
 
-  const handleMouseEnter = () => {
-    if (closeTimeoutRef.current) {
-      clearTimeout(closeTimeoutRef.current);
-      closeTimeoutRef.current = null;
-    }
-    setSettingsOpen(true);
-  };
-
-  const handleMouseLeave = () => {
-    closeTimeoutRef.current = setTimeout(() => setSettingsOpen(false), 150);
-  };
+  useEffect(() => {
+    if (!settingsOpen) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (settingsRef.current && !settingsRef.current.contains(e.target as Node)) {
+        setSettingsOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [settingsOpen]);
 
   const handleLogout = () => {
+    setSettingsOpen(false);
     if (typeof window !== "undefined") {
       localStorage.removeItem(TOKEN_KEY);
       localStorage.removeItem(USER_KEY);
     }
     setUser(null);
-    router.push("/");
+    router.push("/login");
   };
 
   const handleSwitchUser = () => {
+    setSettingsOpen(false);
     if (typeof window !== "undefined") {
       localStorage.removeItem(TOKEN_KEY);
       localStorage.removeItem(USER_KEY);
@@ -77,16 +78,21 @@ function AuthSidebar({ onGoToDashboard, onGoToSummary }: AuthSidebarProps) {
           <PieChart className="h-4 w-4" />
           <span>Account summary</span>
         </Link>
+
+        <Link
+          href="/plan-Ai"
+          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-colors"
+        >
+          <Sparkles className="h-4 w-4" />
+          <span>Plan with AI</span>
+        </Link>
       </nav>
 
-      {/* Settings at bottom – hover opens menu */}
-      <div
-        className="relative shrink-0 px-3 py-4 border-t pt-2"
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-      >
+      {/* Settings at bottom – click opens popup */}
+      <div ref={settingsRef} className="relative shrink-0 px-3 py-4 border-t pt-2">
         <button
           type="button"
+          onClick={() => setSettingsOpen((prev) => !prev)}
           className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-colors"
         >
           <Settings className="h-4 w-4" />
@@ -94,11 +100,7 @@ function AuthSidebar({ onGoToDashboard, onGoToSummary }: AuthSidebarProps) {
         </button>
 
         {settingsOpen && (
-          <div
-            className="absolute bottom-full left-3 right-3 mb-1 py-1 rounded-lg bg-white border border-gray-200 shadow-lg z-50"
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-          >
+          <div className="absolute bottom-full left-3 right-3 mb-1 py-1 rounded-lg bg-white border border-gray-200 shadow-lg z-50">
             <button
               type="button"
               onClick={handleSwitchUser}
@@ -115,6 +117,14 @@ function AuthSidebar({ onGoToDashboard, onGoToSummary }: AuthSidebarProps) {
               <LogOut className="h-4 w-4" />
               <span>Logout</span>
             </button>
+            <Link
+              href="/deleteUser"
+              onClick={() => setSettingsOpen(false)}
+              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
+            >
+              <Trash2 className="h-4 w-4" />
+              <span>Delete account</span>
+            </Link>
           </div>
         )}
       </div>

@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/card";
 import { UserPlus, User, Mail, Lock, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
-
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:3001";
 export default function RegisterPage() {
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -38,7 +38,7 @@ export default function RegisterPage() {
     setLoading(true); // start loading
 
     try {
-      const res = await fetch("http://localhost:3001/register", {
+      const res = await fetch(`${API_BASE}/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ fullName, email, password }),
@@ -50,7 +50,7 @@ export default function RegisterPage() {
         setSuccess(true);
         setTimeout(() => {
           router.push("/login");
-        }, 2000);
+        }, 1500);
       } else {
         const message =
           response.detail ||
@@ -68,11 +68,6 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-secondary flex flex-col items-center justify-center px-6 pt-20 pb-10">
-      {success && (
-        <div className="w-full max-w-md mb-4 rounded-xl bg-green-500 text-white font-semibold text-center py-4 px-4 shadow-lg">
-          Register successful
-        </div>
-      )}
       <Card className="w-full max-w-md rounded-2xl shadow-2xl border-border">
         <CardHeader className="text-center pb-2">
           <div className="mx-auto w-14 h-14 rounded-full bg-primary flex items-center justify-center mb-4">
@@ -166,6 +161,12 @@ export default function RegisterPage() {
                 />
               </div>
             </div>
+
+            {success && (
+              <div className="rounded-xl bg-green-500 text-white font-semibold text-center py-4 px-4 shadow-lg">
+                Register successful
+              </div>
+            )}
 
             {/* Register Button */}
             <Button
