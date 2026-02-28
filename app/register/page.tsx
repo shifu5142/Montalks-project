@@ -21,7 +21,8 @@ export default function RegisterPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [loading, setLoading] = useState(false); // ✅ loading state
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
   const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent) {
@@ -46,9 +47,16 @@ export default function RegisterPage() {
       const response = await res.json();
 
       if (response.success) {
-        router.push("/login");
+        setSuccess(true);
+        setTimeout(() => {
+          router.push("/login");
+        }, 2000);
       } else {
-        alert("Some of the fields are incorrect");
+        const message =
+          response.detail ||
+          response.message ||
+          "Some of the fields are incorrect";
+        alert(message);
       }
     } catch (err) {
       console.error(err);
@@ -60,6 +68,11 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen bg-secondary flex flex-col items-center justify-center px-6 pt-20 pb-10">
+      {success && (
+        <div className="w-full max-w-md mb-4 rounded-xl bg-green-500 text-white font-semibold text-center py-4 px-4 shadow-lg">
+          Register successful
+        </div>
+      )}
       <Card className="w-full max-w-md rounded-2xl shadow-2xl border-border">
         <CardHeader className="text-center pb-2">
           <div className="mx-auto w-14 h-14 rounded-full bg-primary flex items-center justify-center mb-4">

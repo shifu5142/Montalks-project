@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   title: "MonTalks - Save Your Money, Grow Your Wealth",
   description:
     "Smart money planning ideas and tools to help you save, invest, and grow your wealth.",
+    icons: {
+      icon: "/montalks-icon.png",
+    },
 };
 
 export const viewport: Viewport = {

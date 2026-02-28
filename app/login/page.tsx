@@ -15,16 +15,20 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { User, Mail, Lock } from "lucide-react";
+import { User, Mail, Lock, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
+
 export default function LoginPage() {
   const { setUser } = useAppContext();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [userName, setuserName] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
+    setLoading(true);
     try {
       const res = await fetch("http://localhost:3001/login", {
         // Handle login logic
@@ -39,24 +43,37 @@ export default function LoginPage() {
       });
       const response = await res.json();
       if (response.success) {
-        alert(response.message);
-        setUser({
-          fullName: response.user.fullName,
-          email: response.user.email,
-        });
-        router.push("/");
-        setuserName(response.user);
+        const userData = response.user ?? {
+          fullName: "User",
+          email: email.trim(),
+        };
+        setUser({ fullName: userData.fullName, email: userData.email });
+        if (typeof window !== "undefined") {
+          localStorage.setItem("montalks_token", response.token ?? "");
+          localStorage.setItem("montalks_user", JSON.stringify(userData));
+        }
+        setSuccess(true);
+        setTimeout(() => {
+          router.push("/");
+        }, 2000);
       } else {
-        alert(`user doesnt found`);
+        alert(response.message || "Login failed");
       }
     } catch (err) {
       console.error(err);
-      alert("Server error");
+      alert("Server error. Is the backend running on http://localhost:3001?");
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
     <div className="min-h-screen bg-secondary flex flex-col items-center justify-center px-6 pt-16">
+      {success && (
+        <div className="w-full max-w-md mb-4 rounded-xl bg-green-500 text-white font-semibold text-center py-4 px-4 shadow-lg">
+          Login successful
+        </div>
+      )}
       <Card className="w-full max-w-md rounded-2xl shadow-2xl border-border">
         <CardHeader className="text-center pb-2">
           <div className="mx-auto w-14 h-14 rounded-full bg-primary flex items-center justify-center mb-4">
@@ -110,9 +127,17 @@ export default function LoginPage() {
 
             <Button
               type="submit"
-              className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold shadow-lg hover:bg-primary/90 text-base mt-2"
+              disabled={loading}
+              className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold shadow-lg hover:bg-primary/90 text-base mt-2 disabled:opacity-70 disabled:pointer-events-none"
             >
-              Login
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Logging in...
+                </span>
+              ) : (
+                "Login"
+              )}
             </Button>
           </form>
         </CardContent>
