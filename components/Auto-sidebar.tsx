@@ -1,8 +1,13 @@
 "use client";
 
-import React from "react";
+import React, { useState, useRef } from "react";
 import Link from "next/link";
-import { Home, PieChart } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { Home, PieChart, Settings, LogOut, Users } from "lucide-react";
+import { useAppContext } from "@/app/context/AppContext";
+
+const TOKEN_KEY = "montalks_token";
+const USER_KEY = "montalks_user";
 
 type AuthSidebarProps = {
   onGoToDashboard: () => void;
@@ -10,6 +15,41 @@ type AuthSidebarProps = {
 };
 
 function AuthSidebar({ onGoToDashboard, onGoToSummary }: AuthSidebarProps) {
+  const { setUser } = useAppContext();
+  const router = useRouter();
+  const [settingsOpen, setSettingsOpen] = useState(false);
+  const closeTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleMouseEnter = () => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+    setSettingsOpen(true);
+  };
+
+  const handleMouseLeave = () => {
+    closeTimeoutRef.current = setTimeout(() => setSettingsOpen(false), 150);
+  };
+
+  const handleLogout = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(USER_KEY);
+    }
+    setUser(null);
+    router.push("/");
+  };
+
+  const handleSwitchUser = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem(USER_KEY);
+    }
+    setUser(null);
+    router.push("/login");
+  };
+
   return (
     <aside className="hidden md:flex fixed top-16 left-0 h-[calc(100vh-4rem)] w-56 flex-col border-r bg-white/95 backdrop-blur-sm z-40">
       <div className="px-5 pt-24 pb-4 border-b">
@@ -38,6 +78,46 @@ function AuthSidebar({ onGoToDashboard, onGoToSummary }: AuthSidebarProps) {
           <span>Account summary</span>
         </Link>
       </nav>
+
+      {/* Settings at bottom – hover opens menu */}
+      <div
+        className="relative shrink-0 px-3 py-4 border-t pt-2"
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+      >
+        <button
+          type="button"
+          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-colors"
+        >
+          <Settings className="h-4 w-4" />
+          <span>Settings</span>
+        </button>
+
+        {settingsOpen && (
+          <div
+            className="absolute bottom-full left-3 right-3 mb-1 py-1 rounded-lg bg-white border border-gray-200 shadow-lg z-50"
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+          >
+            <button
+              type="button"
+              onClick={handleSwitchUser}
+              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-colors"
+            >
+              <Users className="h-4 w-4" />
+              <span>Switch user</span>
+            </button>
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
+            >
+              <LogOut className="h-4 w-4" />
+              <span>Logout</span>
+            </button>
+          </div>
+        )}
+      </div>
     </aside>
   );
 }
