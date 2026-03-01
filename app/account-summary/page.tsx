@@ -2,7 +2,6 @@
 
 // import React, { useMemo } from "react";
 // import { useAppContext } from "@/app/context/AppContext";
-// import { useKindeBrowserClient} from "@kinde-oss/kinde-auth-nextjs";
 // type AccountSummaryProps = {
 //   summaryRef?: React.RefObject<HTMLDivElement>;
 // };
