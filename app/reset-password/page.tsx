@@ -1,20 +1,11 @@
 "use client";
 
-import React from "react"
-
+import React from "react";
 import Link from "next/link";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
 import { KeyRound, Mail } from "lucide-react";
 
 export default function ResetPasswordPage() {
@@ -22,28 +13,27 @@ export default function ResetPasswordPage() {
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    // Handle reset password logic
   }
 
   return (
-    <div className="min-h-screen bg-secondary flex flex-col items-center justify-center px-6 pt-16">
-      <Card className="w-full max-w-md rounded-2xl shadow-2xl border-border">
-        <CardHeader className="text-center pb-2">
-          <div className="mx-auto w-14 h-14 rounded-full bg-primary flex items-center justify-center mb-4">
-            <KeyRound className="h-7 w-7 text-primary-foreground" />
+    <div className="min-h-screen bg-background flex items-center justify-center px-6 pt-14">
+      <div className="w-full max-w-sm">
+        <div className="text-center mb-8">
+          <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-primary mb-5">
+            <KeyRound className="h-5 w-5 text-primary-foreground" />
           </div>
-          <CardTitle className="text-3xl font-extrabold text-primary">
-            Reset Password
-          </CardTitle>
-          <CardDescription className="text-muted-foreground mt-2">
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">
+            Reset your password
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1.5">
             {"Enter your email and we'll send you a reset link"}
-          </CardDescription>
-        </CardHeader>
+          </p>
+        </div>
 
-        <CardContent>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="email" className="text-foreground font-medium">
+        <div className="rounded-xl border border-border bg-card p-6">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="email" className="text-xs font-medium text-foreground">
                 Email
               </Label>
               <div className="relative">
@@ -51,10 +41,10 @@ export default function ResetPasswordPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 h-12 rounded-xl border-input focus-visible:ring-primary"
+                  className="pl-10 h-10 rounded-lg border-input text-sm"
                   required
                 />
               </div>
@@ -62,34 +52,33 @@ export default function ResetPasswordPage() {
 
             <Button
               type="submit"
-              className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold shadow-lg hover:bg-primary/90 text-base mt-2"
+              className="w-full h-10 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 mt-1"
             >
               Send Reset Link
             </Button>
           </form>
-        </CardContent>
+        </div>
 
-        <CardFooter className="flex flex-col gap-3 text-center text-sm text-muted-foreground">
+        <div className="flex flex-col gap-2 text-center text-sm text-muted-foreground mt-6">
           <p>
             {"Remembered your password? "}
             <Link
               href="/login"
-              className="text-primary font-semibold hover:underline"
+              className="text-foreground font-medium hover:underline"
             >
-              Login
+              Sign in
             </Link>
           </p>
           <p>
-            {"Back to "}
             <Link
               href="/"
-              className="text-primary font-semibold hover:underline"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
-              Home
+              Back to home
             </Link>
           </p>
-        </CardFooter>
-      </Card>
+        </div>
+      </div>
     </div>
   );
 }

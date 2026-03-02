@@ -5,15 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
-import { Trash2, Mail, Lock, ShieldCheck } from "lucide-react";
+import { Trash2, Mail, Lock, ShieldCheck, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useAppContext } from "@/app/context/AppContext";
 
@@ -80,24 +72,24 @@ export default function DeleteUserPage() {
   }
 
   return (
-    <div className="min-h-screen bg-secondary flex flex-col items-center justify-center px-6 pt-20 pb-10">
-      <Card className="w-full max-w-md rounded-2xl shadow-2xl border-border">
-        <CardHeader className="text-center pb-2">
-          <div className="mx-auto w-14 h-14 rounded-full bg-red-500 flex items-center justify-center mb-4">
-            <Trash2 className="h-7 w-7 text-white" />
+    <div className="min-h-screen bg-background flex items-center justify-center px-6 pt-14 pb-10">
+      <div className="w-full max-w-sm">
+        <div className="text-center mb-8">
+          <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-destructive mb-5">
+            <Trash2 className="h-5 w-5 text-destructive-foreground" />
           </div>
-          <CardTitle className="text-3xl font-extrabold text-red-600">
-            Delete Account
-          </CardTitle>
-          <CardDescription className="text-muted-foreground mt-2">
-            Enter your credentials to permanently delete your account
-          </CardDescription>
-        </CardHeader>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">
+            Delete account
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1.5">
+            This action is permanent and cannot be undone
+          </p>
+        </div>
 
-        <CardContent>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="email" className="text-foreground font-medium">
+        <div className="rounded-xl border border-destructive/20 bg-card p-6">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="email" className="text-xs font-medium text-foreground">
                 Email
               </Label>
               <div className="relative">
@@ -105,17 +97,17 @@ export default function DeleteUserPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 h-12 rounded-xl border-input focus-visible:ring-primary"
+                  className="pl-10 h-10 rounded-lg border-input text-sm"
                   required
                 />
               </div>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="password" className="text-foreground font-medium">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="password" className="text-xs font-medium text-foreground">
                 Password
               </Label>
               <div className="relative">
@@ -126,17 +118,14 @@ export default function DeleteUserPage() {
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 h-12 rounded-xl border-input focus-visible:ring-primary"
+                  className="pl-10 h-10 rounded-lg border-input text-sm"
                   required
                 />
               </div>
             </div>
 
-            <div className="flex flex-col gap-2">
-              <Label
-                htmlFor="confirmPassword"
-                className="text-foreground font-medium"
-              >
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="confirmPassword" className="text-xs font-medium text-foreground">
                 Confirm Password
               </Label>
               <div className="relative">
@@ -147,14 +136,14 @@ export default function DeleteUserPage() {
                   placeholder="Confirm your password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="pl-10 h-12 rounded-xl border-input focus-visible:ring-primary"
+                  className="pl-10 h-10 rounded-lg border-input text-sm"
                   required
                 />
               </div>
             </div>
 
             {success && (
-              <div className="rounded-xl bg-green-500 text-white font-semibold text-center py-4 px-4 shadow-lg">
+              <div className="rounded-lg bg-success text-success-foreground text-sm font-medium text-center py-3 px-4">
                 Account deleted successfully
               </div>
             )}
@@ -162,25 +151,30 @@ export default function DeleteUserPage() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-12 rounded-xl bg-red-600 hover:bg-red-700 text-white font-semibold shadow-lg text-base mt-2"
+              className="w-full h-10 rounded-lg bg-destructive text-destructive-foreground text-sm font-medium hover:bg-destructive/90 mt-1 disabled:opacity-60 disabled:pointer-events-none"
             >
-              {loading ? "Deleting..." : "Delete account"}
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Deleting...
+                </span>
+              ) : (
+                "Delete account permanently"
+              )}
             </Button>
           </form>
-        </CardContent>
+        </div>
 
-        <CardFooter className="flex flex-col text-center text-sm text-muted-foreground">
-          <p>
-            Changed your mind?{" "}
-            <Link
-              href="/"
-              className="text-primary font-semibold hover:underline"
-            >
-              Go back
-            </Link>
-          </p>
-        </CardFooter>
-      </Card>
+        <p className="text-center text-sm text-muted-foreground mt-6">
+          Changed your mind?{" "}
+          <Link
+            href="/"
+            className="text-foreground font-medium hover:underline"
+          >
+            Go back
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }

@@ -2,8 +2,8 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { Home, PieChart, Settings, LogOut, Users, Trash2, Sparkles } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { Home, PieChart, Settings, LogOut, Users, Trash2, Sparkles, ChevronUp } from "lucide-react";
 import { useAppContext } from "@/app/context/AppContext";
 
 const TOKEN_KEY = "montalks_token";
@@ -16,6 +16,7 @@ type AuthSidebarProps = {
 function AuthSidebar({ onGoToSummary }: AuthSidebarProps) {
   const { setUser } = useAppContext();
   const router = useRouter();
+  const pathname = usePathname();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const settingsRef = useRef<HTMLDivElement>(null);
 
@@ -50,59 +51,61 @@ function AuthSidebar({ onGoToSummary }: AuthSidebarProps) {
     router.push("/login");
   };
 
+  const navItems = [
+    { href: "/", label: "Dashboard", icon: Home },
+    { href: "/account-summary", label: "Account Summary", icon: PieChart, onClick: onGoToSummary },
+    { href: "/plan-Ai", label: "Plan with AI", icon: Sparkles },
+  ];
+
   return (
-    <aside className="hidden md:flex fixed top-16 left-0 h-[calc(100vh-4rem)] w-56 flex-col border-r bg-white/95 backdrop-blur-sm z-40">
-      <div className="px-5 pt-24 pb-4 border-b">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-400">
+    <aside className="hidden md:flex fixed top-0 left-0 h-screen w-56 flex-col border-r border-border bg-card z-40">
+      <div className="px-5 pt-6 pb-5">
+        <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           MonTalks
         </p>
-        <h2 className="mt-1 text-lg font-bold text-gray-900">Money Hub</h2>
+        <h2 className="mt-1 text-base font-bold text-foreground tracking-tight">Money Hub</h2>
       </div>
 
-      <nav className="flex-1 px-3 py-4 space-y-1">
-        <Link
-          href="/"
-          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-colors"
-        >
-          <Home className="h-4 w-4" />
-          <span>Dashboard</span>
-        </Link>
-
-        <Link
-          href="/account-summary"
-          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-colors"
-          onClick={onGoToSummary}
-        >
-          <PieChart className="h-4 w-4" />
-          <span>Account summary</span>
-        </Link>
-
-        <Link
-          href="/plan-Ai"
-          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-colors"
-        >
-          <Sparkles className="h-4 w-4" />
-          <span>Plan with AI</span>
-        </Link>
+      <nav className="flex-1 px-3 py-2 flex flex-col gap-0.5">
+        {navItems.map((item) => {
+          const isActive = pathname === item.href;
+          return (
+            <Link
+              key={item.href}
+              href={item.href}
+              onClick={item.onClick}
+              className={`flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                isActive
+                  ? "bg-primary text-primary-foreground"
+                  : "text-muted-foreground hover:bg-secondary hover:text-foreground"
+              }`}
+            >
+              <item.icon className="h-4 w-4" />
+              <span>{item.label}</span>
+            </Link>
+          );
+        })}
       </nav>
 
-      {/* Settings at bottom – click opens popup */}
-      <div ref={settingsRef} className="relative shrink-0 px-3 py-4 border-t pt-2">
+      <div ref={settingsRef} className="relative shrink-0 px-3 py-3 border-t border-border">
         <button
           type="button"
           onClick={() => setSettingsOpen((prev) => !prev)}
-          className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-colors"
+          className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
         >
-          <Settings className="h-4 w-4" />
-          <span>Settings</span>
+          <span className="flex items-center gap-2.5">
+            <Settings className="h-4 w-4" />
+            Settings
+          </span>
+          <ChevronUp className={`h-3.5 w-3.5 transition-transform ${settingsOpen ? "" : "rotate-180"}`} />
         </button>
 
         {settingsOpen && (
-          <div className="absolute bottom-full left-3 right-3 mb-1 py-1 rounded-lg bg-white border border-gray-200 shadow-lg z-50">
+          <div className="absolute bottom-full left-3 right-3 mb-1 py-1 rounded-lg bg-card border border-border shadow-lg z-50">
             <button
               type="button"
               onClick={handleSwitchUser}
-              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-colors"
+              className="flex w-full items-center gap-2.5 px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-secondary hover:text-foreground transition-colors"
             >
               <Users className="h-4 w-4" />
               <span>Switch user</span>
@@ -110,7 +113,7 @@ function AuthSidebar({ onGoToSummary }: AuthSidebarProps) {
             <button
               type="button"
               onClick={handleLogout}
-              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-red-50 hover:text-red-600 transition-colors"
+              className="flex w-full items-center gap-2.5 px-3 py-2 text-sm font-medium text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
             >
               <LogOut className="h-4 w-4" />
               <span>Logout</span>
@@ -118,7 +121,7 @@ function AuthSidebar({ onGoToSummary }: AuthSidebarProps) {
             <Link
               href="/deleteUser"
               onClick={() => setSettingsOpen(false)}
-              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 transition-colors"
+              className="flex w-full items-center gap-2.5 px-3 py-2 text-sm font-medium text-destructive hover:bg-destructive/10 transition-colors"
             >
               <Trash2 className="h-4 w-4" />
               <span>Delete account</span>

@@ -6,15 +6,7 @@ import { useAppContext } from "@/app/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Card,
-  CardHeader,
-  CardTitle,
-  CardDescription,
-  CardContent,
-  CardFooter,
-} from "@/components/ui/card";
-import { UserPlus, User, Mail, Lock, ShieldCheck } from "lucide-react";
+import { User, Mail, Lock, ShieldCheck, Loader2, Wallet } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:3001";
@@ -53,7 +45,7 @@ export default function RegisterPage() {
       return;
     }
 
-    setLoading(true); // start loading
+    setLoading(true);
 
     try {
       const res = await fetch(`${API_BASE}/register`, {
@@ -80,30 +72,29 @@ export default function RegisterPage() {
       console.error(err);
       alert("Server error");
     } finally {
-      setLoading(false); // stop loading
+      setLoading(false);
     }
   }
 
   return (
-    <div className="min-h-screen bg-secondary flex flex-col items-center justify-center px-6 pt-20 pb-10">
-      <Card className="w-full max-w-md rounded-2xl shadow-2xl border-border">
-        <CardHeader className="text-center pb-2">
-          <div className="mx-auto w-14 h-14 rounded-full bg-primary flex items-center justify-center mb-4">
-            <UserPlus className="h-7 w-7 text-primary-foreground" />
+    <div className="min-h-screen bg-background flex items-center justify-center px-6 pt-14 pb-10">
+      <div className="w-full max-w-sm">
+        <div className="text-center mb-8">
+          <div className="mx-auto flex h-11 w-11 items-center justify-center rounded-xl bg-primary mb-5">
+            <Wallet className="h-5 w-5 text-primary-foreground" />
           </div>
-          <CardTitle className="text-3xl font-extrabold text-primary">
-            Create Account
-          </CardTitle>
-          <CardDescription className="text-muted-foreground mt-2">
-            Please fill in the form to register
-          </CardDescription>
-        </CardHeader>
+          <h1 className="text-2xl font-bold text-foreground tracking-tight">
+            Create your account
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1.5">
+            Start managing your finances today
+          </p>
+        </div>
 
-        <CardContent>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-            {/* Full Name */}
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="fullName" className="text-foreground font-medium">
+        <div className="rounded-xl border border-border bg-card p-6">
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="fullName" className="text-xs font-medium text-foreground">
                 Full Name
               </Label>
               <div className="relative">
@@ -111,18 +102,17 @@ export default function RegisterPage() {
                 <Input
                   id="fullName"
                   type="text"
-                  placeholder="Enter your full name"
+                  placeholder="John Doe"
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
-                  className="pl-10 h-12 rounded-xl border-input focus-visible:ring-primary"
+                  className="pl-10 h-10 rounded-lg border-input text-sm"
                   required
                 />
               </div>
             </div>
 
-            {/* Email */}
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="email" className="text-foreground font-medium">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="email" className="text-xs font-medium text-foreground">
                 Email
               </Label>
               <div className="relative">
@@ -130,18 +120,17 @@ export default function RegisterPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="Enter your email"
+                  placeholder="name@example.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="pl-10 h-12 rounded-xl border-input focus-visible:ring-primary"
+                  className="pl-10 h-10 rounded-lg border-input text-sm"
                   required
                 />
               </div>
             </div>
 
-            {/* Password */}
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="password" className="text-foreground font-medium">
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="password" className="text-xs font-medium text-foreground">
                 Password
               </Label>
               <div className="relative">
@@ -152,18 +141,14 @@ export default function RegisterPage() {
                   placeholder="Create a password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="pl-10 h-12 rounded-xl border-input focus-visible:ring-primary"
+                  className="pl-10 h-10 rounded-lg border-input text-sm"
                   required
                 />
               </div>
             </div>
 
-            {/* Confirm Password */}
-            <div className="flex flex-col gap-2">
-              <Label
-                htmlFor="confirmPassword"
-                className="text-foreground font-medium"
-              >
+            <div className="flex flex-col gap-1.5">
+              <Label htmlFor="confirmPassword" className="text-xs font-medium text-foreground">
                 Confirm Password
               </Label>
               <div className="relative">
@@ -174,41 +159,45 @@ export default function RegisterPage() {
                   placeholder="Confirm your password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="pl-10 h-12 rounded-xl border-input focus-visible:ring-primary"
+                  className="pl-10 h-10 rounded-lg border-input text-sm"
                   required
                 />
               </div>
             </div>
 
             {success && (
-              <div className="rounded-xl bg-green-500 text-white font-semibold text-center py-4 px-4 shadow-lg">
-                Register successful
+              <div className="rounded-lg bg-success text-success-foreground text-sm font-medium text-center py-3 px-4">
+                Account created successfully
               </div>
             )}
 
-            {/* Register Button */}
             <Button
               type="submit"
-              disabled={loading} // disable when loading
-              className="w-full h-12 rounded-xl bg-primary text-primary-foreground font-semibold shadow-lg hover:bg-primary/90 text-base mt-2"
+              disabled={loading}
+              className="w-full h-10 rounded-lg bg-primary text-primary-foreground text-sm font-medium hover:bg-primary/90 mt-1 disabled:opacity-60 disabled:pointer-events-none"
             >
-              {loading ? "Registering..." : "Register"} {/* show loading */}
+              {loading ? (
+                <span className="flex items-center justify-center gap-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  Creating account...
+                </span>
+              ) : (
+                "Create account"
+              )}
             </Button>
           </form>
-        </CardContent>
+        </div>
 
-        <CardFooter className="flex flex-col text-center text-sm text-muted-foreground">
-          <p>
-            Already have an account?{" "}
-            <Link
-              href="/login"
-              className="text-primary font-semibold hover:underline"
-            >
-              Login
-            </Link>
-          </p>
-        </CardFooter>
-      </Card>
+        <p className="text-center text-sm text-muted-foreground mt-6">
+          Already have an account?{" "}
+          <Link
+            href="/login"
+            className="text-foreground font-medium hover:underline"
+          >
+            Sign in
+          </Link>
+        </p>
+      </div>
     </div>
   );
 }
