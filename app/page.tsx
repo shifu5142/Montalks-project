@@ -6,8 +6,8 @@ import { Footer } from "@/components/footer";
 import { useRef } from "react";
 import Movements from "@/components/Movements";
 import { useAppContext } from "@/app/context/AppContext";
-
-export default function Page() {
+import UserGraph from "@/components/user-graph";
+ function Page() {
   const moneySection = useRef<HTMLDivElement | null>(null);
   const { user } = useAppContext();
 
@@ -27,7 +27,12 @@ export default function Page() {
       )}
       {user ? (
         <div className="md:pl-56 w-full box-border">
-          <MoneyIdeas moneySection={moneySection} /> 
+          <section className="w-full py-12 px-4 md:px-6">
+            <div className="max-w-4xl mx-auto">
+              <UserGraph />
+            </div>
+          </section>
+          <MoneyIdeas moneySection={moneySection} isLoggedIn />
         </div>
       ) : (
         <>
@@ -38,3 +43,4 @@ export default function Page() {
     </>
   );
 }
+export default Page;

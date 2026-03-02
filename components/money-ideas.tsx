@@ -5,10 +5,15 @@ import { TrendingUp, PiggyBank, Wallet, BarChart3 } from "lucide-react";
 const icons = [TrendingUp, PiggyBank, Wallet, BarChart3];
 type props = {
   moneySection: React.RefObject<HTMLDivElement>;
+  /** When true, section uses orange background (e.g. when user is logged in) */
+  isLoggedIn?: boolean;
 };
-export function MoneyIdeas({ moneySection }: props) {
+export function MoneyIdeas({ moneySection, isLoggedIn }: props) {
   return (
-    <section ref={moneySection} className="w-full bg-background py-24 px-6">
+    <section
+      ref={moneySection}
+      className={`w-full py-24 px-6 ${isLoggedIn ? "bg-orange-50" : "bg-background"}`}
+    >
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
           <p className="text-sm font-semibold uppercase tracking-widest text-primary mb-3">

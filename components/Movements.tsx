@@ -6,7 +6,8 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Wallet, ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
 import { useState, useEffect } from "react";
 import AuthSidebar from "./Auto-sidebar";
-const API_BASE = "http://localhost:3001";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
+console.log(API_BASE);
 const TOKEN_KEY = "montalks_token";
 const USER_KEY = "montalks_user";
 
@@ -37,8 +38,11 @@ function Movements() {
   const [withdrawAmount, setWithdrawAmount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState<string>("User");
+  const[arrMovements, setArrMovements] = useState<number[]>([]);
 
-  // Fetch movements from backend on mount (token from localStorage)
+  useEffect(() => {
+    setMovements(numbersToMovements(arrMovements));
+  }, [arrMovements]); 
   useEffect(() => {
     const token =
       typeof window !== "undefined" ? localStorage.getItem(TOKEN_KEY) : null;
@@ -58,17 +62,13 @@ function Movements() {
     }
     (async () => {
       try {
+        // load on first render
         const res = await fetch(`${API_BASE}/api/movements`, {
           headers: { Authorization: `Bearer ${token}` },
         });
-        if (!res.ok) {
-          setLoading(false);
-          return;
-        }
         const data = await res.json();
-        if (data.success && Array.isArray(data.movements)) {
-          setMovements(numbersToMovements(data.movements));
-        }
+        setArrMovements(data.movements);
+        console.log(data);
       } catch {
         // ignore
       } finally {
@@ -89,14 +89,16 @@ function Movements() {
       typeof window !== "undefined" ? localStorage.getItem(TOKEN_KEY) : null;
     if (!token) return;
     try {
-      await fetch(`${API_BASE}/api/movements`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({ movements: movementsToNumbers(newMovements) }),
-      });
+    // save updated array
+    const res = await fetch(`${API_BASE}/api/movements`, {
+     method: "PUT",
+    headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+     },
+     body: JSON.stringify({ movements: movementsToNumbers(newMovements) }),
+});
+  
     } catch (err) {
       console.error("Failed to save movements", err);
     }
@@ -151,147 +153,146 @@ function Movements() {
 
   if (loading) {
     return (
-      <main className="h-screen bg-primary flex items-center justify-center">
-        <p className="text-white font-medium">Loading movements...</p>
+      <main className="h-screen bg-orange-50 flex items-center justify-center">
+        <p className="text-foreground font-medium">Loading movements...</p>
       </main>
     );
   }
 
   return (
     <>
-      <AuthSidebar
-        onGoToDashboard={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-        onGoToSummary={() => {}}
-      />
-      {/* Content area: padding reserves space for sidebar (14rem); content centered so nothing is hidden */}
-      <main className="min-h-screen bg-primary flex flex-col items-center pt-32 px-4 pb-6 md:pl-56 md:pr-4 md:box-border w-full">
-        <div className="w-full flex flex-col items-center gap-6 max-w-4xl mx-auto">
-      <div className="flex flex-col w-full max-w-2xl bg-white rounded-2xl shadow-2xl p-6 md:p-10 shrink-0">
-        <div className="flex flex-col items-center gap-2">
-          <div className="flex items-center gap-2 text-gray-500">
-            <Wallet className="h-4 w-4" />
-            <span className="text-sm font-medium uppercase tracking-widest">
-              Total Balance
-            </span>
-          </div>
-          <p
-            className={`text-5xl font-bold ${totalBalance < 0 ? "text-red-500" : "text-gray-800"}`}
-          >
-            ${totalBalance}
-            <span className="text-2xl text-gray-500">.00</span>
-          </p>
-          <p className="text-sm text-gray-600">
-            Welcome back, <span className="font-medium">{userName}</span>
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="rounded-xl bg-gray-50 p-5 flex flex-col gap-4 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-500/10">
-                <ArrowDownToLine className="h-4 w-4 text-emerald-600" />
+      <AuthSidebar onGoToSummary={() => {}} />
+      <main className="min-h-screen bg-orange-50 flex flex-col items-center pt-32 px-4 pb-12 md:pl-56 md:pr-4 md:box-border w-full">
+        <div className="w-full flex flex-col items-center gap-8 max-w-4xl mx-auto">
+          {/* Balance card — high contrast on orange */}
+          <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl border border-orange-100/80 p-8 md:p-10 shrink-0">
+            <div className="flex flex-col items-center gap-3 text-center">
+              <div className="flex items-center gap-2 text-primary">
+                <Wallet className="h-5 w-5" />
+                <span className="text-sm font-semibold uppercase tracking-widest">
+                  Total Balance
+                </span>
               </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-800">Deposit</p>
-                <p className="text-xs text-gray-500">
-                  Add funds to your account
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <Input
-                value={depositAmount === null ? "" : depositAmount}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setDepositAmount(value === "" ? null : Number(value));
-                }}
-                type="number"
-                placeholder="0.00"
-                className="flex-1 bg-white border border-gray-300 placeholder-gray-400"
-              />
-              <Button
-                onClick={handleDeposit}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 shrink-0"
+              <p
+                className={`text-4xl md:text-5xl font-extrabold tabular-nums ${totalBalance < 0 ? "text-red-600" : "text-neutral-800"}`}
               >
-                Deposit
-              </Button>
-            </div>
-          </div>
-
-          <div className="rounded-xl bg-gray-50 p-5 flex flex-col gap-4 shadow-sm">
-            <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-red-500/10">
-                <ArrowUpFromLine className="h-4 w-4 text-red-500" />
-              </div>
-              <div>
-                <p className="text-sm font-semibold text-gray-800">Withdraw</p>
-                <p className="text-xs text-gray-500">
-                  Send funds from your account
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-3">
-              <Input
-                value={withdrawAmount === null ? "" : withdrawAmount}
-                onChange={(e) => {
-                  const value = e.target.value;
-                  setWithdrawAmount(value === "" ? null : Number(value));
-                }}
-                type="number"
-                placeholder="0.00"
-                className="flex-1 bg-white border border-gray-300 placeholder-gray-400"
-              />
-              <Button
-                onClick={handleWithdraw}
-                className="bg-red-500 hover:bg-red-600 text-white font-semibold px-6 shrink-0"
-              >
-                Withdraw
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex flex-col gap-3 rounded-2xl bg-white shadow-2xl p-2 md:p-3 w-full max-w-4xl shrink-0">
-        <div className="flex items-center justify-between px-3 pt-2 pb-2 shrink-0">
-          <h6 className="text-base md:text-lg font-bold uppercase tracking-widest text-gray-900">
-            Recent Movements
-          </h6>
-          <span className="text-sm font-medium text-gray-600">
-            {movements.length} transactions
-          </span>
-        </div>
-
-        <ScrollArea className="h-28 max-h-28 w-full overflow-auto px-3 pb-2">
-          <div className="flex flex-col gap-1">
-            {movements.length === 0 ? (
-              <p className="text-sm text-gray-500 py-4 text-center">
-                No transactions yet. Deposit or withdraw to get started.
+                ${totalBalance}
+                <span className="text-xl md:text-2xl text-neutral-500 font-medium">.00</span>
               </p>
-            ) : (
-              movements.map((movement, index) => (
-                <div
-                  key={`${movement.date}-${index}-${movement.amount}`}
-                  className="flex items-center justify-between py-2 px-3 rounded-lg bg-gray-50 border border-gray-100"
-                >
-                  <span
-                    className={
-                      movement.type === "deposit"
-                        ? "text-emerald-600 font-medium"
-                        : "text-red-600 font-medium"
-                    }
-                  >
-                    {movement.type === "deposit" ? "+" : "-"}${movement.amount}
-                  </span>
-                  <span className="text-sm text-gray-500">{movement.date}</span>
+              <p className="text-sm text-neutral-600">
+                Welcome back, <span className="font-semibold text-neutral-800">{userName}</span>
+              </p>
+            </div>
+
+            {/* Deposit & Withdraw — clear white panels */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8 pt-8 border-t border-orange-100">
+              <div className="rounded-xl bg-neutral-50/80 border border-orange-100 p-5 flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/15">
+                    <ArrowDownToLine className="h-5 w-5 text-emerald-600" />
+                  </div>
+                  <div>
+                    <p className="text-ln font-bold text-neutral-800">Deposit</p>
+                    <p className="text-xs text-neutral-800">
+                      Add funds to your account
+                    </p>
+                  </div>
                 </div>
-              ))
-            )}
+                <div className="flex gap-3">
+                  <Input
+                    value={depositAmount === null ? "" : depositAmount}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setDepositAmount(value === "" ? null : Number(value));
+                    }}
+                    type="number"
+                    placeholder="0.00"
+                    className="flex-1 h-11 bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus-visible:ring-2 focus-visible:ring-emerald-500/30"
+                  />
+                  <Button
+                    onClick={handleDeposit}
+                    className="h-11 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 shrink-0 rounded-lg"
+                  >
+                    Deposit
+                  </Button>
+                </div>
+              </div>
+
+              <div className="rounded-xl bg-neutral-50/80 border border-orange-100 p-5 flex flex-col gap-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/15">
+                    <ArrowUpFromLine className="h-5 w-5 text-red-600" />
+                  </div>
+                  <div>
+                    <p className="text-ln font-bold text-neutral-800">Withdraw</p>
+                    <p className="text-xs text-neutral-600">
+                      Send funds from your account
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <Input
+                    value={withdrawAmount === null ? "" : withdrawAmount}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      setWithdrawAmount(value === "" ? null : Number(value));
+                    }}
+                    type="number"
+                    placeholder="0.00"
+                    className="flex-1 h-11 bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus-visible:ring-2 focus-visible:ring-red-500/30"
+                  />
+                  <Button
+                    onClick={handleWithdraw}
+                    className="h-11 bg-red-500 hover:bg-red-600 text-white font-semibold px-6 shrink-0 rounded-lg"
+                  >
+                    Withdraw
+                  </Button>
+                </div>
+              </div>
+            </div>
           </div>
-        </ScrollArea>
-      </div>
+
+          {/* Recent Movements — white card, more space */}
+          <div className="w-full max-w-4xl bg-white rounded-2xl shadow-xl border border-orange-100/80 overflow-hidden shrink-0">
+            <div className="flex items-center justify-between px-5 py-4 border-b border-orange-100 bg-neutral-50/50">
+              <h2 className="text-base md:text-lg font-bold uppercase tracking-widest text-primary">
+                Recent Movements
+              </h2>
+              <span className="text-sm font-semibold text-neutral-600 bg-white/80 px-3 py-1 rounded-full border border-orange-100">
+                {movements.length} transaction{movements.length !== 1 ? "s" : ""}
+              </span>
+            </div>
+
+            <ScrollArea className="h-36 max-h-36 w-full">
+              <div className="flex flex-col divide-y divide-orange-100/60">
+                {movements.length === 0 ? (
+                  <p className="text-sm text-neutral-500 py-8 text-center px-4">
+                    No transactions yet. Deposit or withdraw to get started.
+                  </p>
+                ) : (
+                  movements.map((movement, index) => (
+                    <div
+                      key={`${movement.date}-${index}-${movement.amount}`}
+                      className="flex items-center justify-between py-3 px-5 hover:bg-neutral-50/80 transition-colors"
+                    >
+                      <span
+                        className={
+                          movement.type === "deposit"
+                            ? "text-emerald-600 font-semibold"
+                            : "text-red-600 font-semibold"
+                        }
+                      >
+                        {movement.type === "deposit" ? "+" : "−"}${movement.amount}
+                      </span>
+                      <span className="text-sm font-medium text-neutral-600">{movement.date}</span>
+                    </div>
+                  ))
+                )}
+              </div>
+            </ScrollArea>
+          </div>
         </div>
-    </main>
+      </main>
     </>
   );
 }

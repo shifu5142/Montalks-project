@@ -10,11 +10,10 @@ const TOKEN_KEY = "montalks_token";
 const USER_KEY = "montalks_user";
 
 type AuthSidebarProps = {
-  onGoToDashboard: () => void;
   onGoToSummary: () => void;
 };
 
-function AuthSidebar({ onGoToDashboard, onGoToSummary }: AuthSidebarProps) {
+function AuthSidebar({ onGoToSummary }: AuthSidebarProps) {
   const { setUser } = useAppContext();
   const router = useRouter();
   const [settingsOpen, setSettingsOpen] = useState(false);
@@ -61,14 +60,13 @@ function AuthSidebar({ onGoToDashboard, onGoToSummary }: AuthSidebarProps) {
       </div>
 
       <nav className="flex-1 px-3 py-4 space-y-1">
-        <button
-          type="button"
-          onClick={onGoToDashboard}
+        <Link
+          href="/"
           className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-colors"
         >
           <Home className="h-4 w-4" />
           <span>Dashboard</span>
-        </button>
+        </Link>
 
         <Link
           href="/account-summary"

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { useAppContext } from "@/app/context/AppContext";
 import Link from "next/link";
 import { useState } from "react";
@@ -18,13 +18,31 @@ import {
 import { User, Mail, Lock, Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 
+const TOKEN_KEY = "montalks_token";
+
 export default function LoginPage() {
-  const { setUser } = useAppContext();
+  const { user, setUser } = useAppContext();
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
+  const justLoggedInRef = useRef(false);
+  const hasRedirectedRef = useRef(false);
+
+  useEffect(() => {
+    if (hasRedirectedRef.current) return;
+    const isLoggedIn =
+      user ||
+      (typeof window !== "undefined" && localStorage.getItem(TOKEN_KEY));
+    if (isLoggedIn) {
+      hasRedirectedRef.current = true;
+      if (!justLoggedInRef.current) {
+        alert("You are already logged in.");
+      }
+      router.replace("/");
+    }
+  }, [user, router]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -44,6 +62,7 @@ export default function LoginPage() {
       });
       const response = await res.json();
       if (response.success) {
+        justLoggedInRef.current = true;
         const userData = response.user ?? {
           fullName: "User",
           email: email.trim(),

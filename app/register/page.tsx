@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import Link from "next/link";
+import { useAppContext } from "@/app/context/AppContext";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,15 +16,32 @@ import {
 } from "@/components/ui/card";
 import { UserPlus, User, Mail, Lock, ShieldCheck } from "lucide-react";
 import { useRouter } from "next/navigation";
+
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:3001";
+const TOKEN_KEY = "montalks_token";
+
 export default function RegisterPage() {
+  const { user } = useAppContext();
+  const router = useRouter();
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
-  const router = useRouter();
+  const hasRedirectedRef = useRef(false);
+
+  useEffect(() => {
+    if (hasRedirectedRef.current) return;
+    const isLoggedIn =
+      user ||
+      (typeof window !== "undefined" && localStorage.getItem(TOKEN_KEY));
+    if (isLoggedIn) {
+      hasRedirectedRef.current = true;
+      alert("You are already logged in.");
+      router.replace("/");
+    }
+  }, [user, router]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();

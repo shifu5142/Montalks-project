@@ -1,16 +1,20 @@
 "use client";
 
+import React from "react";
 import AuthSidebar from "@/components/Auto-sidebar";
 
-export default function PlanAiLayout({
-  children,
-}: {
+type AccountSummaryLayoutProps = {
   children: React.ReactNode;
-}) {
+};
+
+export default function AccountSummaryLayout({
+  children,
+}: AccountSummaryLayoutProps) {
   return (
     <>
       <AuthSidebar onGoToSummary={() => {}} />
-      <div className="md:pl-56 w-full min-h-screen">{children}</div>
+      {children}
     </>
   );
 }
+
