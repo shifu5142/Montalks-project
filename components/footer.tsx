@@ -1,36 +1,42 @@
 import Link from "next/link";
-import { User } from "lucide-react";
+import { Wallet } from "lucide-react";
 
 export function Footer() {
   return (
-    <footer className="w-full bg-foreground text-background py-12 px-6">
-      <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-        <Link
-          href="/"
-          className="flex items-center gap-2 text-xl font-bold text-background hover:text-primary transition-colors"
-        >
-          <User className="h-6 w-6" />
-          MonTalks
-        </Link>
+    <footer className="w-full bg-orange-50 text-foreground py-12 px-6 border-t border-orange-100">
+      <div className="max-w-5xl mx-auto">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <Link
+            href="/"
+            className="flex items-center gap-2.5 text-lg font-bold text-foreground tracking-tight"
+          >
+            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-white shadow-sm">
+              <Wallet className="h-3.5 w-3.5 text-orange-500" />
+            </div>
+            MonTalks
+          </Link>
 
-        <div className="flex items-center gap-6 text-sm text-background/60">
-          <Link
-            href="/login"
-            className="hover:text-primary transition-colors"
-          >
-            Login
-          </Link>
-          <Link
-            href="/register"
-            className="hover:text-primary transition-colors"
-          >
-            Register
-          </Link>
+          <div className="flex items-center gap-6 text-sm text-foreground/60">
+            <Link
+              href="/login"
+              className="hover:text-foreground transition-colors"
+            >
+              Login
+            </Link>
+            <Link
+              href="/register"
+              className="hover:text-foreground transition-colors"
+            >
+              Register
+            </Link>
+          </div>
         </div>
 
-        <p className="text-sm text-background/40">
-          {"MonTalks. All rights reserved."}
-        </p>
+        <div className="mt-8 pt-6 border-t border-orange-100">
+          <p className="text-xs text-foreground/50 text-center">
+            {"MonTalks. All rights reserved."}
+          </p>
+        </div>
       </div>
     </footer>
   );

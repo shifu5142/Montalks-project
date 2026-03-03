@@ -27,7 +27,7 @@ import UserGraph from "@/components/user-graph";
       )}
       {user ? (
         <div className="md:pl-56 w-full box-border">
-          <section className="w-full py-12 px-4 md:px-6">
+          <section className="w-full py-12 px-4 md:px-6 bg-white">
             <div className="max-w-4xl mx-auto">
               <UserGraph />
             </div>

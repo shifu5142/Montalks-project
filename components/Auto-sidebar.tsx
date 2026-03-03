@@ -53,10 +53,10 @@ function AuthSidebar({ onGoToSummary }: AuthSidebarProps) {
   return (
     <aside className="hidden md:flex fixed top-16 left-0 h-[calc(100vh-4rem)] w-56 flex-col border-r bg-white/95 backdrop-blur-sm z-40">
       <div className="px-5 pt-24 pb-4 border-b">
-        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-400">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-gray-400 hover:text-orange-700 cursor-pointer">
           MonTalks
         </p>
-        <h2 className="mt-1 text-lg font-bold text-gray-900">Money Hub</h2>
+        <h2 className="mt-1 text-lg font-bold text-gray-900 hover:text-orange-700 hover:cursor-pointer" >Money Hub</h2>
       </div>
 
       <nav className="flex-1 px-3 py-4 space-y-1">

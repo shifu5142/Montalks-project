@@ -153,8 +153,8 @@ function Movements() {
 
   if (loading) {
     return (
-      <main className="h-screen bg-orange-50 flex items-center justify-center">
-        <p className="text-foreground font-medium">Loading movements...</p>
+      <main className="h-screen bg-background flex items-center justify-center">
+        <p className="text-muted-foreground text-sm font-medium">Loading movements...</p>
       </main>
     );
   }
@@ -162,43 +162,40 @@ function Movements() {
   return (
     <>
       <AuthSidebar onGoToSummary={() => {}} />
-      <main className="min-h-screen bg-orange-50 flex flex-col items-center pt-32 px-4 pb-12 md:pl-56 md:pr-4 md:box-border w-full">
-        <div className="w-full flex flex-col items-center gap-8 max-w-4xl mx-auto">
-          {/* Balance card — high contrast on orange */}
-          <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl border border-orange-100/80 p-8 md:p-10 shrink-0">
-            <div className="flex flex-col items-center gap-3 text-center">
-              <div className="flex items-center gap-2 text-primary">
-                <Wallet className="h-5 w-5" />
-                <span className="text-sm font-semibold uppercase tracking-widest">
-                  Total Balance
-                </span>
-              </div>
+      <main className="min-h-screen bg-background flex flex-col items-center pt-24 px-4 pb-12 md:pl-60 md:pr-6 md:box-border w-full">
+        <div className="w-full flex flex-col gap-6 max-w-3xl mx-auto">
+          {/* Balance card */}
+          <div className="w-full rounded-xl border border-border bg-card p-6 md:p-8">
+            <div className="flex flex-col items-center gap-2 text-center">
+              <p className="text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+                Total Balance
+              </p>
               <p
-                className={`text-4xl md:text-5xl font-extrabold tabular-nums ${totalBalance < 0 ? "text-red-600" : "text-neutral-800"}`}
+                className={`text-4xl md:text-5xl font-bold tabular-nums tracking-tight ${totalBalance < 0 ? "text-destructive" : "text-foreground"}`}
               >
                 ${totalBalance}
-                <span className="text-xl md:text-2xl text-neutral-500 font-medium">.00</span>
+                <span className="text-lg md:text-xl text-muted-foreground font-normal">.00</span>
               </p>
-              <p className="text-sm text-neutral-600">
-                Welcome back, <span className="font-semibold text-neutral-800">{userName}</span>
+              <p className="text-xs text-muted-foreground mt-1">
+                Welcome back, <span className="font-medium text-foreground">{userName}</span>
               </p>
             </div>
 
-            {/* Deposit & Withdraw — clear white panels */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mt-8 pt-8 border-t border-orange-100">
-              <div className="rounded-xl bg-neutral-50/80 border border-orange-100 p-5 flex flex-col gap-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-500/15">
-                    <ArrowDownToLine className="h-5 w-5 text-emerald-600" />
+            {/* Deposit & Withdraw */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8 pt-6 border-t border-border">
+              <div className="rounded-lg bg-secondary/50 border border-border p-4 flex flex-col gap-3">
+              <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-emerald-50">
+                    <ArrowDownToLine className="h-4 w-4 text-emerald-600" />
                   </div>
                   <div>
-                    <p className="text-ln font-bold text-neutral-800">Deposit</p>
-                    <p className="text-xs text-neutral-800">
-                      Add funds to your account
+                    <p className="text-sm font-semibold text-foreground">Deposit</p>
+                    <p className="text-xs text-muted-foreground">
+                      Add funds
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-2">
                   <Input
                     value={depositAmount === null ? "" : depositAmount}
                     onChange={(e) => {
@@ -207,30 +204,30 @@ function Movements() {
                     }}
                     type="number"
                     placeholder="0.00"
-                    className="flex-1 h-11 bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus-visible:ring-2 focus-visible:ring-emerald-500/30"
+                    className="flex-1 h-9 bg-card border-border text-sm"
                   />
                   <Button
                     onClick={handleDeposit}
-                    className="h-11 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold px-6 shrink-0 rounded-lg"
+                    className="h-9 bg-emerald-500 hover:bg-emerald-600 text-white text-sm font-medium px-4 shrink-0 rounded-lg"
                   >
                     Deposit
                   </Button>
                 </div>
               </div>
 
-              <div className="rounded-xl bg-neutral-50/80 border border-orange-100 p-5 flex flex-col gap-4">
+              <div className="rounded-lg bg-secondary/50 border border-border p-4 flex flex-col gap-3">
                 <div className="flex items-center gap-3">
-                  <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-red-500/15">
-                    <ArrowUpFromLine className="h-5 w-5 text-red-600" />
+                  <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-destructive/10">
+                    <ArrowUpFromLine className="h-4 w-4 text-destructive" />
                   </div>
                   <div>
-                    <p className="text-ln font-bold text-neutral-800">Withdraw</p>
-                    <p className="text-xs text-neutral-600">
-                      Send funds from your account
+                    <p className="text-sm font-semibold text-foreground">Withdraw</p>
+                    <p className="text-xs text-muted-foreground">
+                      Send funds
                     </p>
                   </div>
                 </div>
-                <div className="flex gap-3">
+                <div className="flex gap-2">
                   <Input
                     value={withdrawAmount === null ? "" : withdrawAmount}
                     onChange={(e) => {
@@ -239,11 +236,11 @@ function Movements() {
                     }}
                     type="number"
                     placeholder="0.00"
-                    className="flex-1 h-11 bg-white border border-neutral-200 text-neutral-900 placeholder:text-neutral-400 focus-visible:ring-2 focus-visible:ring-red-500/30"
+                    className="flex-1 h-9 bg-card border-border text-sm"
                   />
                   <Button
                     onClick={handleWithdraw}
-                    className="h-11 bg-red-500 hover:bg-red-600 text-white font-semibold px-6 shrink-0 rounded-lg"
+                    className="h-9 bg-destructive hover:bg-destructive/90 text-destructive-foreground text-sm font-medium px-4 shrink-0 rounded-lg"
                   >
                     Withdraw
                   </Button>
@@ -252,39 +249,39 @@ function Movements() {
             </div>
           </div>
 
-          {/* Recent Movements — white card, more space */}
-          <div className="w-full max-w-4xl bg-white rounded-2xl shadow-xl border border-orange-100/80 overflow-hidden shrink-0">
-            <div className="flex items-center justify-between px-5 py-4 border-b border-orange-100 bg-neutral-50/50">
-              <h2 className="text-base md:text-lg font-bold uppercase tracking-widest text-primary">
+          {/* Recent Movements */}
+          <div className="w-full rounded-xl border border-border bg-card overflow-hidden">
+            <div className="flex items-center justify-between px-5 py-3.5 border-b border-border">
+              <h2 className="text-xs font-semibold uppercase tracking-[0.15em] text-muted-foreground">
                 Recent Movements
               </h2>
-              <span className="text-sm font-semibold text-neutral-600 bg-white/80 px-3 py-1 rounded-full border border-orange-100">
+              <span className="text-xs font-medium text-muted-foreground bg-secondary px-2.5 py-1 rounded-md">
                 {movements.length} transaction{movements.length !== 1 ? "s" : ""}
               </span>
             </div>
 
-            <ScrollArea className="h-36 max-h-36 w-full">
-              <div className="flex flex-col divide-y divide-orange-100/60">
+            <ScrollArea className="h-40 max-h-40 w-full">
+              <div className="flex flex-col divide-y divide-border">
                 {movements.length === 0 ? (
-                  <p className="text-sm text-neutral-500 py-8 text-center px-4">
+                  <p className="text-sm text-muted-foreground py-8 text-center px-4">
                     No transactions yet. Deposit or withdraw to get started.
                   </p>
                 ) : (
                   movements.map((movement, index) => (
                     <div
                       key={`${movement.date}-${index}-${movement.amount}`}
-                      className="flex items-center justify-between py-3 px-5 hover:bg-neutral-50/80 transition-colors"
+                      className="flex items-center justify-between py-3 px-5 hover:bg-secondary/50 transition-colors"
                     >
                       <span
-                        className={
+                        className={`text-sm font-semibold tabular-nums ${
                           movement.type === "deposit"
-                            ? "text-emerald-600 font-semibold"
-                            : "text-red-600 font-semibold"
-                        }
+                            ? "text-emerald-600"
+                            : "text-destructive"
+                        }`}
                       >
-                        {movement.type === "deposit" ? "+" : "−"}${movement.amount}
+                        {movement.type === "deposit" ? "+" : "-"}${movement.amount}
                       </span>
-                      <span className="text-sm font-medium text-neutral-600">{movement.date}</span>
+                      <span className="text-xs font-medium text-muted-foreground">{movement.date}</span>
                     </div>
                   ))
                 )}

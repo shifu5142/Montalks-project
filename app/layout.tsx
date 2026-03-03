@@ -26,10 +26,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.variable} font-sans antialiased`}>
+      <body className={`${inter.variable} font-sans antialiased bg-orange-50 text-foreground`}>
         <AppProvider>
           <MenuBar />
-          <main>{children}</main>
+          <main className="min-h-screen">{children}</main>
         </AppProvider>
       </body>
     </html>

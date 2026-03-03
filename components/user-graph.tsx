@@ -15,7 +15,7 @@ import {
   type ChartConfig,
 } from "@/components/ui/chart";
 
-const API_BASE = typeof window !== "undefined" ? "http://localhost:3001" : "";
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
 const TOKEN_KEY = "montalks_token";
 
 export type Movement = {
@@ -82,7 +82,7 @@ const chartConfig = {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(`${API_BASE}`, {
+        const res = await fetch(`${API_BASE}/api/movements`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (cancelled || !res.ok) return;
@@ -102,7 +102,7 @@ const chartConfig = {
 
   if (movementsProp === undefined && loading) {
     return (
-      <div className="w-full h-[80vh] rounded-xl border border-border/50 bg-card p-4 flex flex-col">
+      <div className="w-full h-[80vh] rounded-xl border border-orange-300 bg-white p-4 flex flex-col">
         <p className="mb-3 text-sm font-semibold text-foreground">Balance over time</p>
         <div className="flex-1 flex items-center justify-center text-muted-foreground text-sm">
           Loading…
@@ -112,7 +112,7 @@ const chartConfig = {
   }
 
   return (
-    <div className="w-full h-[80vh] rounded-xl border border-border/50 bg-card p-4 flex flex-col">
+    <div className="w-full h-[80vh] rounded-xl border border-orange-300 bg-white p-4 flex flex-col">
       <p className="mb-3 text-sm font-semibold text-foreground">
         Balance over time
       </p>

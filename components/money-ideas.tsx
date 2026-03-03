@@ -12,7 +12,7 @@ export function MoneyIdeas({ moneySection, isLoggedIn }: props) {
   return (
     <section
       ref={moneySection}
-      className={`w-full py-24 px-6 ${isLoggedIn ? "bg-orange-50" : "bg-background"}`}
+      className={`w-full py-24 px-6 ${isLoggedIn ? "bg-orange-50" : "bg-white"}`}
     >
       <div className="max-w-6xl mx-auto">
         <div className="text-center mb-16">
