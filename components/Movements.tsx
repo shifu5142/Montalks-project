@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Wallet, ArrowDownToLine, ArrowUpFromLine } from "lucide-react";
 import { useState, useEffect } from "react";
+import { useAppContext } from "@/app/context/AppContext";
 import AuthSidebar from "./Auto-sidebar";
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE;
 console.log(API_BASE);
@@ -33,16 +34,43 @@ function movementsToNumbers(movements: Movement[]): number[] {
 }
 
 function Movements() {
+  const { user } = useAppContext();
   const [movements, setMovements] = useState<Movement[]>([]);
   const [depositAmount, setDepositAmount] = useState<number | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
   const [userName, setUserName] = useState<string>("User");
+  const [userEmail, setUserEmail] = useState<string>("User");
   const[arrMovements, setArrMovements] = useState<number[]>([]);
-
   useEffect(() => {
-    setMovements(numbersToMovements(arrMovements));
-  }, [arrMovements]); 
+    if (user) {
+      setUserName(user.fullName ?? "User");
+      setUserEmail(user.email ?? "User");
+    }
+    const token =
+      typeof window !== "undefined" ? localStorage.getItem(TOKEN_KEY) : null;
+    if (!token || !user) return;
+    (async () => {
+      try {
+        const res = await fetch(`${API_BASE}/api/movements`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            fullName: user?.fullName,
+            email: user?.email,
+          }),
+        });
+        const data = await res.json();
+        console.log(data.user);
+      } catch (err) {
+        console.error("Failed to save user", err);
+      }
+    })();
+  }, [user]);
+
   useEffect(() => {
     const token =
       typeof window !== "undefined" ? localStorage.getItem(TOKEN_KEY) : null;

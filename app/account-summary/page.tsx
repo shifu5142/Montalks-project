@@ -24,9 +24,15 @@ function numbersToMovements(arr: number[]): Movement[] {
   }));
 }
 
+type UserData = {
+  fullName?: string;
+  email?: string;
+};
+
 function AccountSummary({ summaryRef }: AccountSummaryProps) {
   const [movements, setMovements] = useState<Movement[]>([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [user, setUser] = useState<UserData | null>(null);
 
   useEffect(() => {
     const token =
@@ -48,8 +54,19 @@ function AccountSummary({ summaryRef }: AccountSummaryProps) {
         if (!res.ok) return;
 
         const data = await res.json();
-        console.log(data);
-        setMovements(numbersToMovements(data.movements ?? []));
+        if (data.success === true) {
+          if (data.user) {
+            setUser({
+              fullName: data.user.fullName ?? "",
+              email: data.user.email ?? "",
+            });
+          }
+          if (Array.isArray(data.movements)) {
+            setMovements(numbersToMovements(data.movements));
+          }
+        } else if (Array.isArray(data.movements)) {
+          setMovements(numbersToMovements(data.movements));
+        }
       } catch (err) {
         console.error("Failed to load account summary", err);
       }

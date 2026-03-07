@@ -15,7 +15,7 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { User, Mail, Lock, Loader2 } from "lucide-react";
+import { User, Mail, Lock, Loader2, Github } from "lucide-react";
 import { useRouter } from "next/navigation";
 
 const TOKEN_KEY = "montalks_token";
@@ -29,7 +29,7 @@ export default function LoginPage() {
   const [success, setSuccess] = useState(false);
   const justLoggedInRef = useRef(false);
   const hasRedirectedRef = useRef(false);
-
+  const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:3001";
   useEffect(() => {
     if (hasRedirectedRef.current) return;
     const isLoggedIn =
@@ -48,7 +48,7 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const API_BASE = process.env.API_BASE || "http://localhost:3001";
+      const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:3001";
       const res = await fetch(`${API_BASE}/login`, {
         // Handle login logic
         method: "POST",
@@ -159,6 +159,18 @@ export default function LoginPage() {
               ) : (
                 "Login"
               )}
+            </Button>
+
+            <Button
+            onClick={() => {
+              window.location.href = `${API_BASE}/login/auth/github`;
+            }}
+              type="button"
+              variant="outline"
+              className="w-full h-12 rounded-xl border-input bg-background text-foreground font-semibold shadow-sm hover:bg-accent hover:text-accent-foreground text-base flex items-center justify-center gap-2"
+            >
+              <Github className="h-5 w-5" />
+              Continue with GitHub
             </Button>
           </form>
         </CardContent>

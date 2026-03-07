@@ -1,5 +1,5 @@
 "use client";
-
+import Comments from "@/components/comments";
 import { HeroSection } from "@/components/hero-section";
 import { MoneyIdeas } from "@/components/money-ideas";
 import { Footer } from "@/components/footer";
@@ -37,6 +37,7 @@ import UserGraph from "@/components/user-graph";
       ) : (
         <>
           <MoneyIdeas moneySection={moneySection} />
+          <Comments />
           <Footer />
         </>
       )}
