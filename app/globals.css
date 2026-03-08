@@ -9,6 +9,9 @@
 }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   :root {
     /* Light orange overall background and warm neutrals */
     --background: 30 100% 96%;

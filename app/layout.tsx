@@ -29,7 +29,7 @@ export default function RootLayout({
       <body className={`${inter.variable} font-sans antialiased bg-orange-50 text-foreground`}>
         <AppProvider>
           <MenuBar />
-          <main className="min-h-screen">{children}</main>
+          <main id="top" className="min-h-screen">{children}</main>
         </AppProvider>
       </body>
     </html>

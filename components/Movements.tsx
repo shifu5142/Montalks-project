@@ -34,7 +34,7 @@ function movementsToNumbers(movements: Movement[]): number[] {
 }
 
 function Movements() {
-  const { user } = useAppContext();
+  const { user, logout } = useAppContext();
   const [movements, setMovements] = useState<Movement[]>([]);
   const [depositAmount, setDepositAmount] = useState<number | null>(null);
   const [withdrawAmount, setWithdrawAmount] = useState<number | null>(null);
@@ -63,13 +63,24 @@ function Movements() {
             email: user?.email,
           }),
         });
+        if (res.status === 401) {
+          logout();
+          return;
+        }
         const data = await res.json();
-        console.log(data.user);
+        if (data.success === true && data.user) {
+          setUserName(data.user.fullName ?? user?.fullName ?? "User");
+          setUserEmail(data.user.email ?? user?.email ?? "User");
+          if (Array.isArray(data.movements)) {
+            setArrMovements(data.movements);
+            setMovements(numbersToMovements(data.movements));
+          }
+        }
       } catch (err) {
         console.error("Failed to save user", err);
       }
     })();
-  }, [user]);
+  }, [user, logout]);
 
   useEffect(() => {
     const token =
@@ -90,20 +101,24 @@ function Movements() {
     }
     (async () => {
       try {
-        // load on first render
         const res = await fetch(`${API_BASE}/api/movements`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        if (res.status === 401) {
+          logout();
+          return;
+        }
         const data = await res.json();
-        setArrMovements(data.movements);
-        console.log(data);
+        const loaded = Array.isArray(data.movements) ? data.movements : [];
+        setArrMovements(loaded);
+        setMovements(numbersToMovements(loaded));
       } catch {
         // ignore
       } finally {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [logout]);
 
   const totalBalance =
     movements.length === 0
@@ -117,16 +132,23 @@ function Movements() {
       typeof window !== "undefined" ? localStorage.getItem(TOKEN_KEY) : null;
     if (!token) return;
     try {
-    // save updated array
-    const res = await fetch(`${API_BASE}/api/movements`, {
-     method: "PUT",
-    headers: {
-    "Content-Type": "application/json",
-    Authorization: `Bearer ${token}`,
-     },
-     body: JSON.stringify({ movements: movementsToNumbers(newMovements) }),
-});
-  
+      const res = await fetch(`${API_BASE}/api/movements`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ movements: movementsToNumbers(newMovements) }),
+      });
+      if (res.status === 401) {
+        logout();
+        return;
+      }
+      const data = await res.json();
+      if (data.success === true && Array.isArray(data.movements)) {
+        setArrMovements(data.movements);
+        setMovements(numbersToMovements(data.movements));
+      }
     } catch (err) {
       console.error("Failed to save movements", err);
     }

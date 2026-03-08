@@ -2,20 +2,15 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Home, PieChart, Settings, LogOut, Users, Trash2, Sparkles } from "lucide-react";
 import { useAppContext } from "@/app/context/AppContext";
-
-const TOKEN_KEY = "montalks_token";
-const USER_KEY = "montalks_user";
 
 type AuthSidebarProps = {
   onGoToSummary: () => void;
 };
 
 function AuthSidebar({ onGoToSummary }: AuthSidebarProps) {
-  const { setUser } = useAppContext();
-  const router = useRouter();
+  const { logout } = useAppContext();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const settingsRef = useRef<HTMLDivElement>(null);
 
@@ -32,22 +27,12 @@ function AuthSidebar({ onGoToSummary }: AuthSidebarProps) {
 
   const handleLogout = () => {
     setSettingsOpen(false);
-    if (typeof window !== "undefined") {
-      localStorage.removeItem(TOKEN_KEY);
-      localStorage.removeItem(USER_KEY);
-    }
-    setUser(null);
-    router.push("/login");
+    logout();
   };
 
   const handleSwitchUser = () => {
     setSettingsOpen(false);
-    if (typeof window !== "undefined") {
-      localStorage.removeItem(TOKEN_KEY);
-      localStorage.removeItem(USER_KEY);
-    }
-    setUser(null);
-    router.push("/login");
+    logout();
   };
 
   return (

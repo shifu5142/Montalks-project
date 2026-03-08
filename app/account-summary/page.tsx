@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useMemo, useState } from "react";
+import { useAppContext } from "@/app/context/AppContext";
 
 type AccountSummaryProps = {
   summaryRef?: React.RefObject<HTMLDivElement>;
@@ -30,6 +31,7 @@ type UserData = {
 };
 
 function AccountSummary({ summaryRef }: AccountSummaryProps) {
+  const { logout } = useAppContext();
   const [movements, setMovements] = useState<Movement[]>([]);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [user, setUser] = useState<UserData | null>(null);
@@ -51,6 +53,10 @@ function AccountSummary({ summaryRef }: AccountSummaryProps) {
           headers: { Authorization: `Bearer ${token}` },
         });
 
+        if (res.status === 401) {
+          logout();
+          return;
+        }
         if (!res.ok) return;
 
         const data = await res.json();
@@ -71,7 +77,7 @@ function AccountSummary({ summaryRef }: AccountSummaryProps) {
         console.error("Failed to load account summary", err);
       }
     })();
-  }, []);
+  }, [logout]);
 
   const { balance, totalDeposits, totalWithdrawals } = useMemo(() => {
     return movements.reduce(

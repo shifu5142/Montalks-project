@@ -7,6 +7,7 @@ import { useRef } from "react";
 import Movements from "@/components/Movements";
 import { useAppContext } from "@/app/context/AppContext";
 import UserGraph from "@/components/user-graph";
+import WebPattern from "@/components/Web-pattern";
  function Page() {
   const moneySection = useRef<HTMLDivElement | null>(null);
   const { user } = useAppContext();
@@ -38,6 +39,7 @@ import UserGraph from "@/components/user-graph";
         <>
           <MoneyIdeas moneySection={moneySection} />
           <Comments />
+          <WebPattern />
           <Footer />
         </>
       )}

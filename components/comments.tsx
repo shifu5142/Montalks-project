@@ -27,6 +27,16 @@ const comments: Comment[] = [
     role: "Freelancer",
     text: "Planning my monthly budget is finally simple. I can see exactly where my money is going.",
   },
+  {
+    name: "Jessica Martinez",
+    role: "Marketing Lead",
+    text: "Our team uses Montalks to align on goals and track progress. It has improved our workflow significantly.",
+  },
+  {
+    name: "Alex Turner",
+    role: "Student",
+    text: "As a student, staying on top of expenses was tough. This app made it straightforward and stress-free.",
+  },
 ]
 
 export default function Comments() {

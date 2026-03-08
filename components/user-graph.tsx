@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useMemo, useState, useEffect } from "react";
+import { useAppContext } from "@/app/context/AppContext";
 import {
   AreaChart,
   Area,
@@ -69,6 +70,7 @@ const chartConfig = {
 } satisfies ChartConfig;
 
  function UserGraph({ movements: movementsProp }: UserGraphProps) {
+  const { logout } = useAppContext();
   const [fetchedMovements, setFetchedMovements] = useState<Movement[]>([]);
   const [loading, setLoading] = useState(movementsProp === undefined);
 
@@ -85,6 +87,10 @@ const chartConfig = {
         const res = await fetch(`${API_BASE}/api/movements`, {
           headers: { Authorization: `Bearer ${token}` },
         });
+        if (res.status === 401) {
+          logout();
+          return;
+        }
         if (cancelled || !res.ok) return;
         const data = await res.json();
         if (data.success && Array.isArray(data.movements)) {
@@ -95,7 +101,7 @@ const chartConfig = {
       }
     })();
     return () => { cancelled = true; };
-  }, [movementsProp]);
+  }, [movementsProp, logout]);
 
   const movements = movementsProp ?? fetchedMovements;
   const chartData = useMemo(() => buildChartData(movements), [movements]);
