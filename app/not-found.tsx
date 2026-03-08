@@ -24,8 +24,9 @@ export default function NotFound() {
           className="bg-primary text-primary-foreground hover:bg-primary/90 h-12 rounded-lg px-8 text-sm font-semibold"
         >
           <Link href="/" className="inline-flex items-center gap-2">
-            <Home className="h-4 w-4" />
-            Return to main page
+            
+            Return
+            <Home className="h-4 w-4" /> 
           </Link>
         </Button>
       </div>

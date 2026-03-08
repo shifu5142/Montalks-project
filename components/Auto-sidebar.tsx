@@ -2,7 +2,7 @@
 
 import React, { useState, useRef, useEffect } from "react";
 import Link from "next/link";
-import { Home, PieChart, Settings, LogOut, Users, Trash2, Sparkles } from "lucide-react";
+import { Home, PieChart, Settings, LogOut, Users, Trash2, Sparkles, KeyRound } from "lucide-react";
 import { useAppContext } from "@/app/context/AppContext";
 
 type AuthSidebarProps = {
@@ -92,6 +92,14 @@ function AuthSidebar({ onGoToSummary }: AuthSidebarProps) {
               <Users className="h-4 w-4" />
               <span>Switch user</span>
             </button>
+            <Link
+              href="/reset-password"
+              onClick={() => setSettingsOpen(false)}
+              className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-orange-50 hover:text-orange-700 transition-colors"
+            >
+              <KeyRound className="h-4 w-4" />
+              <span>Reset password</span>
+            </Link>
             <button
               type="button"
               onClick={handleLogout}

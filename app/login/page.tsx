@@ -163,7 +163,7 @@ export default function LoginPage() {
 
             <Button
             onClick={() => {
-              window.location.href = `${API_BASE}/login/auth/github`;
+              window.location.href = `${API_BASE}/auth/github`;
             }}
               type="button"
               variant="outline"
