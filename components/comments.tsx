@@ -41,31 +41,31 @@ const comments: Comment[] = [
 
 export default function Comments() {
   return (
-    <section className="flex h-screen w-full flex-col items-center justify-start bg-secondary/40 px-4 pt-20 pb-10 md:px-8">
-      <div className="mx-auto flex w-full max-w-4xl flex-col gap-8">
-        <h2 className=" text-balance text-center  text-3xl font-bold tracking-tight text-foreground md:text-4xl">
+    <section className="flex min-h-screen w-full flex-col items-center justify-start overflow-x-hidden bg-secondary/40 px-4 pt-20 pb-10 md:px-8">
+      <div className="mx-auto flex w-full max-w-4xl min-w-0 flex-col gap-8">
+        <h2 className="text-balance text-center text-3xl font-bold tracking-tight text-foreground md:text-4xl">
           What people are saying
         </h2>
-        <div className="grid gap-5 sm:grid-cols-2 " >
+        <div className="grid min-w-0 grid-cols-1 gap-5 sm:grid-cols-2">
           {comments.map((comment) => (
             <div
               key={comment.name}
-              className="flex flex-col gap-4 rounded-xl border border-border/60 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
+              className="flex min-w-0 flex-col gap-4 overflow-hidden rounded-xl border border-border/60 bg-white p-6 shadow-sm transition-shadow hover:shadow-md"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex min-w-0 items-center gap-3">
                 <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10">
                   <User className="h-5 w-5 text-primary" />
                 </div>
-                <div className="flex flex-col">
-                  <span className="font-semibold text-foreground">
+                <div className="min-w-0 flex-1 flex flex-col">
+                  <span className="break-words font-semibold text-foreground">
                     {comment.name}
                   </span>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="break-words text-xs text-muted-foreground">
                     {comment.role}
                   </span>
                 </div>
               </div>
-              <p className="text-sm leading-relaxed text-muted-foreground">
+              <p className="min-w-0 text-sm leading-relaxed text-muted-foreground break-words">
                 &ldquo;{comment.text}&rdquo;
               </p>
             </div>
