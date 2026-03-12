@@ -80,15 +80,17 @@ export default function LoginPage() {
     }
   };
   useEffect(() => {
-    if (hasRedirectedRef.current) return;
+    // If this navigation comes right after a successful login,
+    // let the explicit setTimeout redirect handle it.
+    if (justLoggedInRef.current || hasRedirectedRef.current) return;
+
     const isLoggedIn =
       user ||
       (typeof window !== "undefined" && localStorage.getItem(TOKEN_KEY));
+
     if (isLoggedIn) {
       hasRedirectedRef.current = true;
-      if (!justLoggedInRef.current) {
-        alert("You are already logged in.");
-      }
+      alert("You are already logged in.");
       router.replace("/");
     }
   }, [user, router]);
