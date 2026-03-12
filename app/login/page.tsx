@@ -7,7 +7,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { GithubAuthProvider, signInWithPopup } from "firebase/auth";
+import { GithubAuthProvider, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
 import { auth } from "@/app/services/auth/firebaseConfig";
 
 import {
@@ -18,7 +18,8 @@ import {
   CardContent,
   CardFooter,
 } from "@/components/ui/card";
-import { User, Mail, Lock, Loader2, Github } from "lucide-react";
+import { User, Mail, Lock, Loader2, Github} from "lucide-react";
+import { FcGoogle } from "react-icons/fc";
 import { useRouter } from "next/navigation";
 
 const TOKEN_KEY = "montalks_token";
@@ -94,7 +95,54 @@ export default function LoginPage() {
       router.replace("/");
     }
   }, [user, router]);
+  ///////google login ///////////////////////////////////////////////////////
+const handleGoogleLogin = async () => {
+  const provider = new GoogleAuthProvider();
+  try {
+    const result = await signInWithPopup(auth, provider);
+    console.log(result);
+    const firebaseUser = result.user.displayName;
+    const firebaseUserEmail = result.user.email;
+    console.log(firebaseUser, firebaseUserEmail);
+    const userData = {
+      fullName: firebaseUser ?? "Google User",
+      email: firebaseUserEmail ?? "google@user",
+    };
+    const res = await fetch(`${API_BASE}/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
 
+      body: JSON.stringify({
+        GoogleUser: userData,
+      }),
+    });
+    const response = await res.json();
+    if (response.success) {
+      justLoggedInRef.current = true;
+      const userData = response.user ?? {
+        fullName: "User",
+        email: email.trim(),
+      };
+      setUser({ fullName: userData.fullName, email: userData.email });
+      if (typeof window !== "undefined") {
+        localStorage.setItem("montalks_token", response.token ?? "");
+        localStorage.setItem("montalks_user", JSON.stringify(userData));
+      }
+      setSuccess(true);
+      setTimeout(() => {
+        router.push("/");
+      }, 1500);
+    } else {
+      alert(response.message || "Login failed");
+    }
+  }
+  catch (error) {
+    console.error(error);
+    alert("Google login failed. Please try again.");
+  }
+}
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -212,13 +260,23 @@ export default function LoginPage() {
             </Button>
 
             <Button
-            onClick={handleGithubLogin}
+              onClick={handleGithubLogin}
               type="button"
               variant="outline"
               className="w-full h-12 rounded-xl border-input bg-background text-foreground font-semibold shadow-sm hover:bg-accent hover:text-accent-foreground text-base flex items-center justify-center gap-2"
             >
               <Github className="h-5 w-5" />
               Continue with GitHub
+            </Button>
+
+            <Button
+              onClick={handleGoogleLogin}
+              type="button"
+              variant="outline"
+              className="w-full h-12 rounded-xl border-input bg-background text-foreground font-semibold shadow-sm hover:bg-accent hover:text-accent-foreground text-base flex items-center justify-center mt-2"
+            >
+              <FcGoogle className="h-5 w-5" />
+              Continue with Google
             </Button>
           </form>
         </CardContent>
