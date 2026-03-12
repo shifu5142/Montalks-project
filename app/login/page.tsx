@@ -7,6 +7,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { GithubAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "@/app/services/auth/firebaseConfig";
+
 import {
   Card,
   CardHeader,
@@ -30,6 +33,52 @@ export default function LoginPage() {
   const justLoggedInRef = useRef(false);
   const hasRedirectedRef = useRef(false);
   const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:3001";
+  // GitHub login via Firebase
+  const handleGithubLogin = async () => {
+    const provider = new GithubAuthProvider();
+    try {
+      const result = await signInWithPopup(auth, provider);
+      const firebaseUser = result.user;
+
+      const userData = {
+        fullName: firebaseUser.displayName ?? "GitHub User",
+        email: firebaseUser.email ?? "github@user",
+      };
+      console.log(userData);
+      const res = await fetch(`${API_BASE}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          GithubUser: userData,
+        }),
+      });
+      const response = await res.json();
+      if (response.success) {
+        justLoggedInRef.current = true;
+        const userData = response.user ?? {
+          fullName: "User",
+          email: email.trim(),
+        };
+        setUser({ fullName: userData.fullName, email: userData.email });
+        if (typeof window !== "undefined") {
+          localStorage.setItem("montalks_token", response.token ?? "");
+          localStorage.setItem("montalks_user", JSON.stringify(userData));
+        }
+        setSuccess(true);
+        setTimeout(() => {
+          router.push("/");
+        }, 1500);
+      } else {
+        alert(response.message || "Login failed");
+      }
+      // Put user into the same AppContext as normal login
+    } catch (error) {
+      console.error(error);
+      alert("GitHub login failed. Please try again.");
+    }
+  };
   useEffect(() => {
     if (hasRedirectedRef.current) return;
     const isLoggedIn =
@@ -48,7 +97,6 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const API_BASE = process.env.NEXT_PUBLIC_API_BASE || "http://localhost:3001";
       const res = await fetch(`${API_BASE}/login`, {
         // Handle login logic
         method: "POST",
@@ -162,9 +210,7 @@ export default function LoginPage() {
             </Button>
 
             <Button
-            onClick={() => {
-              window.location.href = `${API_BASE}/auth/github`;
-            }}
+            onClick={handleGithubLogin}
               type="button"
               variant="outline"
               className="w-full h-12 rounded-xl border-input bg-background text-foreground font-semibold shadow-sm hover:bg-accent hover:text-accent-foreground text-base flex items-center justify-center gap-2"
